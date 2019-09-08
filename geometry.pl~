@@ -1,0 +1,5 @@
+point(_,_).
+%segment(point(X1,Y1),point(X2,Y2)).
+vertical(segment(point(X,_),point(X,_))).
+horizontal(segment(point(_,Y),point(_,Y))).
+segment(point(2,3),point(1,1)).
