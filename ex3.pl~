@@ -74,5 +74,5 @@ mergeSortedLists([H1|T1],[H2|T2],[H1|Tres]):-H1 < H2,!,mergeSortedLists(T1,[H2|T
 mergeSortedLists(List1,[H2|T2],[H2|Tres]):-mergeSortedLists(T2,List1,Tres).
 
 % Two same elements consistenly
-hasConsRep(X):-append(_,[Y,Y|_],X),!.
+hasConsRep(X):-cappend(_,[Y,Y|_],X),!.
 

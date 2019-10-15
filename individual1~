@@ -1,0 +1,5 @@
+% Список всех простых делителей числа
+prime_divider_list(X,Res):-prime_divider_list(X,Res,2).
+prime_divider_list(X,X,X):-!.
+prime_divider_list(X,[I|T],I):- Mod is X mod I,Mod = 0,!,New_x is X div I,prime_divider_list(New_x,T,I).
+prime_divider_list(X,Res,I):- I1 is I + 1,prime_divider_list(X,Res,I1).

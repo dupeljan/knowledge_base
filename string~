@@ -1,0 +1,21 @@
+pr3(X):-string_concat(X,", ",Y),string_concat(Y, X,Z),string_concat(Z,", ",A),
+    string_concat(A,X,Res),string_length(X,Len),write(Res),write(Len).
+
+string_concatN(X,1,X):-!.
+string_concatN(X,N,Res):-string_concat(X,", ",Y),I is N - 1,string_concatN(X,I,Pres),string_concat(Y,Pres,Res).
+
+
+%Дана строка. Вывести первый, последний и средний элемент, если есть
+out3Elem(X):-sub_string(X,0,1,_,First),sub_string(X,_,1,0,Last),
+    write(First),write(Last),
+    string_length(X,Len),M is mod(Len,2),M = 1, Middle is div(Len,2),
+    sub_string(X,Middle,1,_,Middle_elem),write(Middle_elem).
+
+% Дана строка. Показать номера символов, совпадающих с последним
+% элементом
+numOfLast(Str):-sub_string(Str,_,1,0,Last),sub_string(Str,Before,_,_,Last),
+    Res is Before + 1, write(Res).
+
+
+% Удалить в строке все вхождения ABC
+deleteABC(Str):-split_string(Str,"ABC"," ",L),write(L).

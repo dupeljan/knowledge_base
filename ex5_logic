@@ -1,0 +1,56 @@
+%Member (X,List)
+%member(X,[]):-false,!.
+member(X,[X|T]).
+member(X,[H|T]):-member(X,T).
+
+%i elem(I,List,res) from 1
+%elem(I,Res,[]):-false,!.
+findi(1,H,[H|T]):-!.
+findi(I,Res,[H|T]):-I1 is I - 1,findi(I1,Res,T).
+
+% X левее Y
+%isLeft(X,Y,List).
+%isLeft(X,Y,[X,Y|_]):-!.
+%isLeft(X,Y,[Z|T]):-X\=Z,!,isLeft(X,Y,T).
+%isLeft(X,Y,[Z,S|T]):-Y\=S,isLeft(X,Y,[S|T]).
+isLeft(X,Y,T):-append(_,[X,Y|_],T).
+
+near(X,Y,T):-append(_,[X,Y|_],T).
+near(X,Y,T):-append(_,[Y,X|_],T).
+
+%Норвежец живет в первом до
+enstain(Houses):-Houses = [_,_,_,_,_],
+    %Новежец живет в первом доме
+    findi(1,[nord,_,_,_,_],Houses),
+    %Жилец из третьего дома пьет молоко
+    findi(3,[_,milk,_,_,_],Houses),
+    %Англичанин живет в красном доме
+    member([eng,_,_,_,red],Houses),
+    %Швед держит собаку
+    member([swid,_,_,dog,_],Houses),
+    %Датчанин пьет чай
+    member([dat,tea,_,_,_],Houses),
+    %Зеленый дом стоит левее белого
+    isLeft([_,_,_,_,green],[_,_,_,_,white],Houses),
+    %Жилец зеленого дома пьет кофе
+    member([_,coffee,_,_,green],Houses),
+    %Жилец, куряший palmal, держит птицу
+    member([_,_,palmar,bird,_],Houses),
+    %Жилец из желтого дома курит danhell
+    member([_,_,danhell,_,yellow],Houses),
+    %Курильщик malboro живет около того, кто держит кошку
+    near([_,_,malboro,_,_],[_,_,_,cat,_],Houses),
+    %Человек, который держит лошадь, живет рядом с курильщиком danhell
+    near([_,_,_,hourse,_],[_,_,danhell,_,_],Houses),
+    %Курильщик winfield пьет пиво
+    member([_,beer,winfield,_,_],Houses),
+    %Норвежец живет около голубого дома
+    near([nord,_,_,_,_],[_,_,_,_,blue],Houses),
+    %Немец курит rodmance
+    member([ger,_,rodmance,_,_],Houses),
+    %Курильщик malboro живет по соседву с человеком, который пьет воду
+    near([_,_,malboro,_,_],[_,water,_,_,_],Houses).
+
+
+% Есть пять домов. Национальность, напиток, сигарета, животное, цвет в
+% каждом доме разные. Задача - у кого рыбки
