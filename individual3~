@@ -1,0 +1,5 @@
+solve_str(Inp,Out):-split_string(Inp," ","",[H|T]),exclude(not_same_character(H),T,Out).
+
+not_same_character(A,B):-string_codes(A,Alist),string_codes(B,Blist),sort(Alist,As),sort(Blist,Bs),As \= Bs.
+
+
