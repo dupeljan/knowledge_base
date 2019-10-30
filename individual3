@@ -1,5 +1,5 @@
 solve_str(Inp,Out):-split_string(Inp," ","",[H|T]),include(same_character(H),T,Out).
 
-same_character(A,B):-string_codes(A,Alist),string_codes(B,Blist),sort(Alist,As),sort(Blist,Bs),As = Bs.
+same_character(A,B):-string_codes(A,Alist),string_codes(B,Blist),sort(Alist,As),sort(Blist,Bs),list_to_set(As,Ar),list_to_set(Bs,Br),Ar = Br.
 
 
