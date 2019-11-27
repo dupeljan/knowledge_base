@@ -1,0 +1,35 @@
+p(1,2,1).
+p(1,3,2).
+p(3,4,2).
+p(2,4,1).
+p(4,5,3).
+
+find_all(X,G,Bag):-post_it(X,G),gather([],Bag).
+post_it(X,G):-call(G),asserta(data999(X)),fail.
+post_it(_,_).
+gather(B,Bag):-data999(X),retract(data999(X)),gather([X|B],Bag).
+gather(B,B).
+
+search(X,Y,[X,Y]):-(p(X,Y,_);p(Y,X,_)),!.
+search(X,Y,[X|T]):-(p(X,Z,_);p(Z,X,_)),search(Z,Y,T),not(member(X,T)),!.
+
+%Найти вершину графа с максимальной степенью
+%
+maxDeg(Res):-findall(X,p(X,Y,Z),From),findall(Y,p(X,Y,Z),To),append(From,To,V),mostFrElem(V,Res),!.
+mostFrElem([X],X):-!.
+mostFrElem(List,Res):-list_to_set(List,Set),maplist(content(List),Set,Fr),max(Fr,Max),findValueI(Fr,Max,I).
+
+max([X],X):-!.
+max([H|T],H):-max(T,Y),H>Y,!.
+max([H|T],X):-max(T,X).
+
+findValueI([H|T],H,1).
+findValueI([H|T],X,I):-findValueI(T,X,I1),I is 1 + I1.
+
+findI([H|T],1,H):-!.
+findI([H|T],I,Res):-I1 is I - 1,findI(T,I1,Res).
+
+content([],_,0):-!.
+content([H|T],H,I):-content(T,H,I1),I is 1 + I1,!.
+content([H|T],X,I):-content(T,X,I).
+
