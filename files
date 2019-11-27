@@ -11,7 +11,7 @@ run:-see('cat.txt'),setof(X,readln(X),Res),seen,write(Res).
 fileToList(F,L):-seen,see(F),readfile([],[],L),seen.
 readfile(T, R, L):-get0(X), (X<0,
                              (T=[], L=R; name(T1, T), append(R, [T1], L)),!;
-                            (X=32;  X=13),
+                            (X=32;  X=13), % x=10
                             (T=[], readfile(T, R, L); name(T1, T), append(R, [T1], R1), readfile([], R1, L))
                             ,!; X>0, append(T, [X], T1), readfile(T1, R, L),!).
 
@@ -31,3 +31,23 @@ mul(X,Y,Res):- Res is X * Y.
 %
 
 %conc_str_list(List,Res):-foldl(string_concat,List,'',Res).
+
+
+consonant('йцкнгшщзхфвпрлджчсмтбqwrtpsdfghjklzxcbnmv').
+
+ind4(File,File_out,Res):-file_to_line_list(File,L),maplist(fr_of_cons,L,Keys),pairs_keys_values(P,Keys,L),
+    keysort(P,P_res),pairs_values(P_res,Res),tell(File_out),maplist(writeln,Res),tell(user).
+
+fr_of_cons(Word,Fr):-count_of_cons(Word,Count),string_length(Word,Len),(Len = 0, Fr is 0,! ; Fr is Count / Len).
+count_of_cons(Word,Count):-string_chars(Word,L),foldl(is_cons,L,0,Count).
+is_cons(Char,Pred,Res):-(consonant(X),string_chars(X,C),string_lower(Char,Char_l),atom_string(Atom,Char_l),member(Atom,C),Res is Pred + 1,!);Res is Pred.
+
+
+file_to_line_list(File,List):-fileToList(File,L),list_to_line_list(L,L1),maplist(a_t_s,L1,List).
+a_t_s(List,Res):-atomics_to_string(List,' ',Res).
+
+list_to_line_list(Lin,Lout):-l_to_l_l(Lin,[],Lout).
+l_to_l_l([H|T],Prev,[New_line|Res_T]):-sub_string(H,_,_,_,'\n'),!,split_string(H,'\n','',[Split_H|Split_T]),
+    append(Prev,[Split_H],New_line),append(Split_T,T,New_T),l_to_l_l(New_T,[],Res_T).
+l_to_l_l([H|T],Prev,Lout):-append(Prev,[H],New_Pred),l_to_l_l(T,New_Pred,Lout).
+l_to_l_l([],Prev,[Prev]):-!.

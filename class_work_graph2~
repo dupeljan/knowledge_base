@@ -23,7 +23,7 @@ path(X,Y,Seen,[X,Y]):- \+memberchk(X,Seen),(edge(X,Y);edge(Y,X)).
 path(X,Z,Seen,[X|T]):- \+memberchk(X,Seen),(edge(X,Y);edge(Y,X)),
     path(Y,Z,[X|Seen],T).
 
-%Самый длинный путь из вершины Start
+%Первый попавшийся путь из вершины Start
 path_first(Start,Answer):- path_start([Start],Answer),!.
 path_start([X|T],Y):-children(X,C), member(Some,C), \+memberchk(Some,T), T1 = [Some,X|T],path_start(T1,Y).
 
