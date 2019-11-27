@@ -1,0 +1,4 @@
+main_(Fin,Res):- seen,see(Fin),read_file(Fin,Res).
+
+read_file(Fin,[X|T]):- readln(X),read_file(Fin,T).
+

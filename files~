@@ -21,5 +21,13 @@ readfile(T, R, L):-get0(X), (X<0,
 readDots(F,R):-seen,see(F),readln(List),exclude(is_dot,List,Nlist),list_to_set(Nlist,R).
 is_dot(X):-X='.'.
 
-fact(X,Res,List):-findall(Num, between(1, X, Num), List),foldl(mul,List,1,Res).
+fact(X,Res):-findall(Num, between(1, X, Num), List),foldl(mul,List,1,Res).
 mul(X,Y,Res):- Res is X * Y.
+
+
+% В файле дан текст. Переставить и вывести в отдельный файл строки
+% заданного текста в соответствии с ростом доли согласных в строках.
+% ind4(Fin,Fout,Res):-seen,see(Fin),readln(Res1),readln(Res2),append(Res1,Res2,Res).
+%
+
+%conc_str_list(List,Res):-foldl(string_concat,List,'',Res).

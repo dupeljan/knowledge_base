@@ -11,7 +11,7 @@ run:-see('cat.txt'),setof(X,readln(X),Res),seen,write(Res).
 fileToList(F,L):-seen,see(F),readfile([],[],L),seen.
 readfile(T, R, L):-get0(X), (X<0,
                              (T=[], L=R; name(T1, T), append(R, [T1], L)),!;
-                            (X=32; X=10; X=13),
+                            (X=32;  X=13),
                             (T=[], readfile(T, R, L); name(T1, T), append(R, [T1], R1), readfile([], R1, L))
                             ,!; X>0, append(T, [X], T1), readfile(T1, R, L),!).
 
@@ -23,3 +23,11 @@ is_dot(X):-X='.'.
 
 fact(X,Res):-findall(Num, between(1, X, Num), List),foldl(mul,List,1,Res).
 mul(X,Y,Res):- Res is X * Y.
+
+
+% В файле дан текст. Переставить и вывести в отдельный файл строки
+% заданного текста в соответствии с ростом доли согласных в строках.
+% ind4(Fin,Fout,Res):-seen,see(Fin),readln(Res1),readln(Res2),append(Res1,Res2,Res).
+%
+
+%conc_str_list(List,Res):-foldl(string_concat,List,'',Res).
