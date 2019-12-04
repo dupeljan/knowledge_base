@@ -36,7 +36,7 @@ mul(X,Y,Res):- Res is X * Y.
 consonant('йцкнгшщзхфвпрлджчсмтбqwrtpsdfghjklzxcbnmv').
 
 ind4(File,File_out,Res):-file_to_line_list(File,L),maplist(fr_of_cons,L,Keys),pairs_keys_values(P,Keys,L),
-    keysort(P,P_res),pairs_values(P_res,Res),tell(File_out),maplist(writeln,Res),tell(user).
+    keysort(P,P_res),pairs_values(P_res,Res),tell(File_out),told,maplist(writeln,Res),tell(user).
 
 fr_of_cons(Word,Fr):-count_of_cons(Word,Count),string_length(Word,Len),(Len = 0, Fr is 0,! ; Fr is Count / Len).
 count_of_cons(Word,Count):-string_chars(Word,L),foldl(is_cons,L,0,Count).
