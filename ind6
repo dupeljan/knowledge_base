@@ -7,13 +7,25 @@
 % никуда
 %
 :- use_module(library(lists)).
-child(1,[2,3]).
-child(2,[1,3]).
-child(3,[2,1]).
-child(4,[]).
-child(5,[]).
-child(6,[]).
+
 p(X,Y,W):-child(X,L),member(Y,L);child(Y,L),member(X,L).
+
+read_graph_from_file(Filename):-file_to_line_list(Filename,List),retractall(child(_,_)),maplist(asserta_string,List).
+asserta_string(Str):-term_string(Term,Str),asserta(Term).
+
+fileToList(F,L):-seen,see(F),readfile([],[],L),seen.
+readfile(T, R, L):-get0(X), (X<0,
+                             (T=[], L=R; name(T1, T), append(R, [T1], L)),!;
+                            (X=32;  X=13), % x=10
+                            (T=[], readfile(T, R, L); name(T1, T), append(R, [T1], R1), readfile([], R1, L))
+                            ,!; X>0, append(T, [X], T1), readfile(T1, R, L),!).
+
+
+file_to_line_list(File,List):-fileToList(File,L),list_to_line_list(L,List).
+a_t_s(List,Res):-atomics_to_string(List,' ',Res).
+
+list_to_line_list([Lin],Splited):-split_string(Lin,'\n','',Splited).
+to_list(Elem,[Elem]).
 
 search(X,Y,[X,Y]):-(p(X,Y,_);p(Y,X,_)).
 search(X,Y,[X|T]):-(p(X,Z,_);p(Z,X,_)),search(Z,Y,T),not(member(X,T)).
@@ -25,7 +37,14 @@ path(A,B,T,R):-child(A,Ch_a),member(C,Ch_a),not(member(C,T)),path(C,B,[A|T],R).
 
 diff_comp(X,Y):-findall(Z,path(X,Z,_),Res),not(member(Y,Res)).
 
-ind6(Filein):-findall(X,child(X,Y),V),maplist(ver_is_even_deg,V),findall(X/Y,(member(X,V),member(Y,V),X < Y,diff_comp(X,Y)),P),maplist(have_not_another_path,P),!.
+list_of_comp(Res):-list_of_comp([],Res).
+list_of_comp(OldRes,Res):-foldl(append,OldRes,[],OldList),child(X,_),not(member(X,OldList)),findall(Z,path(X,Z,_),NewRes),!,append(OldRes,[NewRes],P),list_of_comp(P,Res).
+list_of_comp(Res,Res):-!.
+
+
+ind6(Filein):-read_graph_from_file(Filein),findall(X,child(X,Y),V),maplist(ver_is_even_deg,V),list_of_comp(LoC),foldl(length_more_1,LoC,0,Res),Res = 1,!.
+
+length_more_1(List,Pred,Res):-length(List,L), (L > 1, Res is  Pred + 1,!;Res is Pred).
 vertex_deg(Ver,Deg):-child(Ver,C),length(C,Deg).
 ver_is_even_deg(Ver):-vertex_deg(Ver,Deg),0 is Deg mod 2.
 have_not_another_path(X/Y):-child(X,X_ch),length(X_ch,A), A = 0;child(Y,Y_ch),length(Y_ch,B),B = 0.
