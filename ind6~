@@ -1,0 +1,32 @@
+%Считать граф из файла и проверить на то, является ли он Элеровым
+%Критерий Эйлеровости:
+%
+%1)Степень всех вершин четная
+%2)Только одна компонента связности может иметь ребра
+% Если из а в b нет пути, то из b нет пути никуда или из а нет пути
+% никуда
+%
+:- use_module(library(lists)).
+child(1,[2,3]).
+child(2,[1,3]).
+child(3,[2,1]).
+child(4,[]).
+child(5,[]).
+child(6,[]).
+p(X,Y,W):-child(X,L),member(Y,L);child(Y,L),member(X,L).
+
+search(X,Y,[X,Y]):-(p(X,Y,_);p(Y,X,_)).
+search(X,Y,[X|T]):-(p(X,Z,_);p(Z,X,_)),search(Z,Y,T),not(member(X,T)).
+
+path(A,B,Res):-path(A,B,[],Res).
+path(B,B,R,[B|R]).
+path(A,B,T,R):-child(A,Ch_a),member(C,Ch_a),not(member(C,T)),path(C,B,[A|T],R).
+
+
+diff_comp(X,Y):-findall(Z,path(X,Z,_),Res),not(member(Y,Res)).
+
+ind6(Filein):-findall(X,child(X,Y),V),maplist(ver_is_even_deg,V),findall(X/Y,(member(X,V),member(Y,V),X < Y,diff_comp(X,Y)),P),maplist(have_not_another_path,P).
+vertex_deg(Ver,Deg):-child(Ver,C),length(C,Deg).
+ver_is_even_deg(Ver):-vertex_deg(Ver,Deg),0 is Deg mod 2.
+have_not_another_path(X/Y):-child(X,X_ch),length(X_ch,A), A = 0;child(Y,Y_ch),length(Y_ch,B),B = 0.
+
