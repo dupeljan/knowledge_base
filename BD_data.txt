@@ -1,0 +1,16 @@
+:- dynamic car/2.
+
+car(1, "Toyota").
+car(2, "Nissan").
+car(3, "ЯМЗ").
+
+:- dynamic type/2.
+
+type(1, "Грузовой").
+type(2, "Универсал").
+type(3, "Седан").
+
+:- dynamic master/3.
+
+master("Данил", 1, 2).
+

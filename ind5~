@@ -1,0 +1,159 @@
+run:- consult('BD_data.txt'),
+    retractall(car/2),retractall(type/2), retractall(master/3),
+    menu.
+
+menu:-repeat,
+    write('База данных'),nl,nl,
+    write('1 - Таблица с машинами'),nl,
+    write('2 - Таблица с типами кузова'),nl,
+    write('3 - Таблица с хозяевами'),nl,
+    read(X),
+    X<4,
+    check(X).
+
+check(1):-menu2.
+check(2):-menu3.
+check(3):-menu4.
+
+menu2:-repeat,
+    write('База данных с машинами'),nl,nl,
+    write('1 - Просмотреть все машины в базе данных'),nl,
+    write('2 - Добавить новую машину в базу данных'),nl,
+    write('3 - Удалить машину из базы данных'),nl,
+    write('4 - Сохранить изменения в таблице'),nl,
+    write('5 - Назад'),nl,
+    read(X),
+    X<6,
+    process(X).
+
+menu3:-repeat,
+    write('База данных с типами машин'),nl,nl,
+    write('1 - Просмотреть все типы в базе данных'),nl,
+    write('2 - Добавить новый тип в базу данных'),nl,
+    write('3 - Удалить тип из базы данных'),nl,
+    write('4 - Сохранить изменения в таблице'),nl,
+    write('5 - Назад'),nl,
+    read(X),
+    X<6,
+    process1(X).
+
+menu4:-repeat,
+    write('База данных с хозяевами машин'),nl,nl,
+    write('1 - Просмотреть всех хозяев в базе данных'),nl,
+    write('2 - Добавить нового хозяина в базу данных'),nl,
+    write('3 - Удалить хозяина из базы данных'),nl,
+    write('4 - Сохранить изменения в таблице'),nl,
+    write('5 - Назад'),nl,
+    read(X),
+    X<6,
+    process2(X).
+
+process(1):-viewdata.
+process(2):-addcar.
+process(3):-deletecar.
+process(4):-dbsave.
+process(5):-menu.
+
+process1(1):-viewdata1.
+process1(2):-addtype.
+process1(3):-deletetype.
+process1(4):-dbsave.
+process1(5):-menu.
+
+process2(1):-viewdata2.
+process2(2):-addmaster.
+process2(3):-deletemaster.
+process2(4):-dbsave.
+process2(5):-menu.
+
+
+
+viewdata1:- type(_,X),
+    write("Тип: "), write(X),nl,
+    write('------------------------------------'),nl,fail,menu3.
+
+viewdata2:-type(T,Y),car(D,Z),master(X,Y,Z),
+    write("Имя: "), write(X),nl,
+    write("Машина: "), write(Z),nl,
+    write("Тип кузова машины: "), write(Y),nl,
+    write('------------------------------------'),nl,fail,menu4.
+
+
+
+viewdata:- car(_,X),
+    write("Машина: "), write(X),nl,
+    write('------------------------------------'),nl,fail,menu2.
+
+addcar:-write("Добавление машины"),nl,nl,
+    write("Введите название: "),
+    read(X),
+    write("id: "), read(Y),(car(Y,_),
+    write("Машина с таким id уже существует");
+    assertz(car(Y,X))),menu2.
+
+addtype:-write("Добавление типа машины"),nl,nl,
+    write("Введите название типа "),
+    read(X),
+    write("id типа: "), read(Y),(type(Y,_),
+    write("Тип с таким id уже существует");
+    assertz(type(Y,X))),menu3.
+
+addmaster:-
+    write("Добавление хозяина машины"),nl,nl,
+    write("Имя: "),read(X),
+    write("Введите название машины: "), read(Y),(not(car(D,Y)),
+    write("Такой машины не существует");
+    write("Введите тип транспорта: "), read(Z),(not(type(T,Z)),
+    write("Такого типа транспорта не существует");
+    car(A,Y),type(B,Z),assertz(master(X,A,B)))),menu4.
+
+deletecar:- write('Удаление машины'),nl,nl,
+    write('Введите машину: '),
+    read(Y),(
+    not(car(_,Y)),write("Машина с таким именем не найдена");
+    retract(car(_,Y)),
+    retract(master(_,_,Y)),
+    write('car deleted'),nl,nl,
+    tell('BD_data.txt'), listing(car),
+    listing(master),listing(type),
+    told, write('Машина удалена успешно'),nl),menu2.
+
+deletetype:- write('Удаление типа'),nl,nl,
+    write('Введите  тип: '),
+    read(X),(
+    not(type(_,X)),write("Тип не найден");
+    retract(type(Y,X)),
+    retract(master(_,Y,_)),
+    write('type deleted'),nl,nl,
+    tell('BD_data.txt'), listing(car),
+    listing(master),listing(type),
+    told, write('Тип кузова удален успешно'),nl),menu3.
+
+deletemaster:- write('Удаление хозяина'),nl,nl,
+    write('Введите имя: '),
+    read(X),(
+    not(master(X,_,_)),
+    writeln("Хозяин с таким именем не найден");
+    retract(master(X,_,_)),
+    write('master deleted'),nl,nl,
+    tell('BD_data.txt'), listing(car),
+    listing(master),listing(type),
+    told, write('Хозяин удален успешно'),nl),menu4.
+
+
+dbsave:- tell('BD_data.txt'), listing(car),listing(type),listing(master),
+    told, write('База данных сохранена в файл'),nl,fail.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
