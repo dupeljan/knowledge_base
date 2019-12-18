@@ -43,4 +43,3 @@ ver_is_even_deg(Ver):-vertex_deg(Ver,Deg),0 is Deg mod 2.
 have_not_another_path(X/Y):-child(X,X_ch),length(X_ch,A), A = 0;child(Y,Y_ch),length(Y_ch,B),B = 0.
 
 
-gammiltov(InpFile):-read_graph_from_file(InpFile),findall(T,child(T,_),V),list_to_set(V,V_set),length(V_set,Mv),member(X,V),member(Y,V),X \= Y,path(X,Y,Res),length(Res,Mr),Mv = Mr,!.

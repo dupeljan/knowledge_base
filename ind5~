@@ -15,7 +15,7 @@ check(1):-menu2.
 check(2):-menu3.
 check(3):-menu4.
 
-menu2:-repeat,
+menu2:-
     write('База данных с машинами'),nl,nl,
     write('1 - Просмотреть все машины в базе данных'),nl,
     write('2 - Добавить новую машину в базу данных'),nl,
@@ -26,7 +26,7 @@ menu2:-repeat,
     X<6,
     process(X).
 
-menu3:-repeat,
+menu3:-
     write('База данных с типами машин'),nl,nl,
     write('1 - Просмотреть все типы в базе данных'),nl,
     write('2 - Добавить новый тип в базу данных'),nl,
@@ -37,7 +37,7 @@ menu3:-repeat,
     X<6,
     process1(X).
 
-menu4:-repeat,
+menu4:-
     write('База данных с хозяевами машин'),nl,nl,
     write('1 - Просмотреть всех хозяев в базе данных'),nl,
     write('2 - Добавить нового хозяина в базу данных'),nl,
@@ -48,13 +48,13 @@ menu4:-repeat,
     X<6,
     process2(X).
 
-process(1):-viewdata.
+process(1):-viewdata(0).
 process(2):-addcar.
 process(3):-deletecar.
 process(4):-dbsave.
 process(5):-menu.
 
-process1(1):-viewdata1.
+process1(1):-viewdata1(0).
 process1(2):-addtype.
 process1(3):-deletetype.
 process1(4):-dbsave.
@@ -67,22 +67,29 @@ process2(4):-dbsave.
 process2(5):-menu.
 
 
-
-viewdata1:- type(_,X),
+viewdata1(Z):-Z is 0,viewdata1,menu3.
+viewdata1(Z):-viewdata1.
+viewdata1:- type(Y,X),
+    write("ID: "),write(Y),nl,
     write("Тип: "), write(X),nl,
-    write('------------------------------------'),nl,fail,menu3.
+    write('------------------------------------'),nl,fail.
+viewdata1.
 
-viewdata2:-type(T,Y),car(D,Z),master(X,Y,Z),
+viewdata2:-type(T,Y),car(D,Z),master(X,D,T),
     write("Имя: "), write(X),nl,
     write("Машина: "), write(Z),nl,
     write("Тип кузова машины: "), write(Y),nl,
-    write('------------------------------------'),nl,fail,menu4.
+    write('------------------------------------'),nl,fail.
+viewdata2:-menu.
 
 
-
-viewdata:- car(_,X),
+viewdata(Z):-Z is 0,viewdata,menu2.
+viewdata(Z):-viewdata.
+viewdata:- car(Y,X),
+    write("ID: "),write(Y),nl,
     write("Машина: "), write(X),nl,
-    write('------------------------------------'),nl,fail,menu2.
+    write('------------------------------------'),nl,fail.
+viewdata.
 
 addcar:-write("Добавление машины"),nl,nl,
     write("Введите название: "),
@@ -101,11 +108,13 @@ addtype:-write("Добавление типа машины"),nl,nl,
 addmaster:-
     write("Добавление хозяина машины"),nl,nl,
     write("Имя: "),read(X),
-    write("Введите название машины: "), read(Y),(not(car(D,Y)),
+    viewdata(1),
+    write("Введите айди машины машины: "), read(Y),(not(car(Y,_)),
     write("Такой машины не существует");
-    write("Введите тип транспорта: "), read(Z),(not(type(T,Z)),
+    viewdata1(1),
+    write("Введите айди типа транспорта: "), read(Z),(not(type(Z,_)),
     write("Такого типа транспорта не существует");
-    car(A,Y),type(B,Z),assertz(master(X,A,B)))),menu4.
+    assertz(master(X,Y,Z)))),menu4.
 
 deletecar:- write('Удаление машины'),nl,nl,
     write('Введите машину: '),
@@ -143,6 +152,12 @@ deletemaster:- write('Удаление хозяина'),nl,nl,
 
 dbsave:- tell('BD_data.txt'), listing(car),listing(type),listing(master),
     told, write('База данных сохранена в файл'),nl,fail.
+
+
+
+
+
+
 
 
 
