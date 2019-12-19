@@ -1,9 +1,10 @@
 :- dynamic child/2.
 
 
-child_s(1,[2]).
+child_s(1,[2,3]).
 child_s(2,[1,3]).
-child_s(3,[2]).
+child_s(3,[1,2,4]).
+child_s(4,[3]).
 
 % VERTEX MUST BE NATURAL AND SEQUENTAL
 % NOT 1 3 4, BUT 1 2 3
@@ -12,7 +13,8 @@ child_s(3,[2]).
 comb( [], []).
 comb(Pred,Res):-member(X,Pred),delete(Pred,X,PredWithoutX),comb(PredWithoutX,Comb),Res = [X|Comb].
 
-writeAllColoring(Res):-
+ind6(Filename):-findall(X,allColoring(X),Res),tell(Filename),maplist(writeln,Res),told.
+allColoring(Res):-
     % Delete all childs
     retractall(child(_,_)),
     % upload all child
