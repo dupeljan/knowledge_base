@@ -1,0 +1,42 @@
+:- dynamic child/2.
+
+
+child_s(1,[2]).
+child_s(2,[1,3]).
+child_s(3,[2]).
+
+% VERTEX MUST BE NATURAL AND SEQUENTAL
+% NOT 1 3 4, BUT 1 2 3
+% CHILDS MUST BE SORTED
+% all left list combination creator
+comb( [], []).
+comb(Pred,Res):-member(X,Pred),delete(Pred,X,PredWithoutX),comb(PredWithoutX,Comb),Res = [X|Comb].
+
+allColoring(Res):-
+    % Delete all childs
+    retractall(child(_,_)),
+    % upload all child
+    assertSourceChild,
+    % Get graph vertex to v, egdes to U
+    setof(X-Y,child(X,Y),R),pairs_keys_values(R,V,U),
+    % Delete all childs again (comment line if you dont want to list original graph)
+    retractall(child(_,_)),
+    % combine V
+    comb(V,CombV),
+    % translate U
+    maplist(translate(CombV),U,TranslatedU),
+    %get some elem from new graph list
+    nth1(Index,CombV,ElemCV),nth1(Index,TranslatedU,ElemU),
+    % aprove that new color is different
+    sort(ElemU,ElemSU),not(child(ElemCV,ElemSU)),
+    % write result
+    pairs_keys_values(Res,CombV,TranslatedU),
+    %add this list to programm
+    maplist(assertChild,Res).
+
+translate(Dict,List,Res):-maplist(translate_(Dict),List,Res).
+translate_(Dict,Elem,Res):-nth1(Elem,Dict,Res).
+
+assertChild(V-C):-assertz(child(V,C)).
+
+assertSourceChild:-setof(X-Y,child_s(X,Y),R),maplist(assertChild,R).
